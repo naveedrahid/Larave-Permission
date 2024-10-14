@@ -14,7 +14,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        //
+        return view('roles.index');
     }
 
     /**
@@ -38,7 +38,7 @@ class RoleController extends Controller
         if ($validator->passes()) {
             $role = Role::create(['name' => $request->name]);
             if (!empty($request->permission)) {
-                foreach ($$request->permission as $name) {
+                foreach ($request->permission as $name) {
                     $role->givePermissionTo($name);
                 }
             } 
