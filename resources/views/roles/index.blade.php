@@ -27,28 +27,36 @@
                         @endif
                         <div class="dataWrapper">
                             <div class="table-responsive">
-                                {{-- <table class="table table-striped table-hover">
+                                <table class="table table-striped table-hover">
                                     <thead>
                                         <tr>
                                             <th width="10%">#</th>
-                                            <th width="60%">Name</th>
+                                            <th width="30%">Name</th>
+                                            <th width="30%">Permissions</th>
                                             <th width="15%">Created</th>
                                             <th width="15%">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($permissions as $permission)
+                                        @forelse ($roles as $role)
                                             <tr>
-                                                <td>{{ $permission->id }}</td>
-                                                <td>{{ $permission->name }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($permission->created_at)->format('d M, Y') }}
+                                                <td>{{ $role->id }}</td>
+                                                <td>{{ $role->name }}</td>
+                                                <td class="d-flex flex-wrap">
+                                                    @foreach ($role->permissions as $permission)
+                                                        <p class="rounded py-1 px-2 bg-success text-white mb-1 me-2">
+                                                            {{ ucfirst($permission->name) }}
+                                                        </p>
+                                                    @endforeach
+                                                </td>
+                                                <td>{{ \Carbon\Carbon::parse($role->created_at)->format('d M, Y') }}
                                                 </td>
                                                 <td>
-                                                    <a href="javascript:void(0);" id="deletePermission"
+                                                    {{-- <a href="javascript:void(0);" id="deletePermission"
                                                         data-id="{{ $permission->id }}"
                                                         class="btn btn-primary btn-sm bg-danger text-white border-0 me-3">{{ __('Delete') }}</a>
                                                     <a href="{{ route('permissions.edit', $permission->id) }}"
-                                                        class="btn btn-primary btn-sm text-white border-0 bg-aqua">{{ __('Edit') }}</a>
+                                                        class="btn btn-primary btn-sm text-white border-0 bg-aqua">{{ __('Edit') }}</a> --}}
                                                 </td>
                                             </tr>
                                         @empty
@@ -57,9 +65,9 @@
                                             </tr>
                                         @endforelse
                                     </tbody>
-                                </table> --}}
+                                </table>
                                 <div class="d-flex justify-content-center">
-                                    {{-- {{ $permissions->links('pagination::bootstrap-4') }} --}}
+                                    {{ $roles->links('pagination::bootstrap-4') }}
                                 </div>
                             </div>
                         </div>
