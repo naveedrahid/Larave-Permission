@@ -6,8 +6,8 @@
             <div class="col-md-12">
                 <div
                     class="pageTitle bg-light shadow-sm py-3 px-3 rounded mb-5 d-flex align-items-center justify-content-between">
-                    <p class="m-0"><strong>{{ __('Roles') }}</strong></p>
-                    <a href="{{ route('roles.create') }}"
+                    <p class="m-0"><strong>{{ __('Articles') }}</strong></p>
+                    <a href="{{ route('articles.create') }}"
                         class="btn btn-primary bg-dark text-white border-0">{{ __('Create') }}</a>
                 </div>
             </div>
@@ -31,31 +31,26 @@
                                     <thead>
                                         <tr>
                                             <th width="10%">#</th>
-                                            <th width="30%">Name</th>
-                                            <th width="30%">Permissions</th>
-                                            <th width="15%">Created</th>
-                                            <th width="15%">Action</th>
+                                            <th width="20%">Title</th>
+                                            <th width="10%">Date</th>
+                                            <th width="30%">Content</th>
+                                            <th width="10%">Author</th>
+                                            <th width="20%">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($roles as $role)
+                                        @forelse ($articles as $article)
                                             <tr>
-                                                <td>{{ $role->id }}</td>
-                                                <td>{{ $role->name }}</td>
-                                                <td class="d-flex flex-wrap">
-                                                    @foreach ($role->permissions as $permission)
-                                                        <p class="rounded py-1 px-2 bg-success text-white mb-1 me-2">
-                                                            {{ ucfirst($permission->name) }}
-                                                        </p>
-                                                    @endforeach
-                                                </td>
-                                                <td>{{ \Carbon\Carbon::parse($role->created_at)->format('d M, Y') }}
-                                                </td>
+                                                <td>{{ $article->id }}</td>
+                                                <td>{{ $article->title }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($article->created_at)->format('d M, Y') }}</td>
+                                                <td>{{ $article->text }}</td>
+                                                <td>{{ $article->author }}</td>
                                                 <td>
-                                                    <a href="javascript:void(0);" id="deleteRole"
-                                                        data-id="{{ $role->id }}"
+                                                    <a href="javascript:void(0);" id="deleteArticle"
+                                                        data-id="{{ $article->id }}"
                                                         class="btn btn-primary btn-sm bg-danger text-white border-0 me-3">{{ __('Delete') }}</a>
-                                                    <a href="{{ route('roles.edit', $role->id) }}"
+                                                    <a href="{{ route('articles.edit', $article->id) }}"
                                                         class="btn btn-primary btn-sm text-white border-0 bg-aqua">{{ __('Edit') }}</a>
                                                 </td>
                                             </tr>
@@ -67,7 +62,7 @@
                                     </tbody>
                                 </table>
                                 <div class="d-flex justify-content-center">
-                                    {{ $roles->links('pagination::bootstrap-4') }}
+                                    {{ $articles->links('pagination::bootstrap-4') }}
                                 </div>
                             </div>
                         </div>
@@ -79,13 +74,13 @@
     @push('js')
         <script>
             $(function() {
-                $('#deleteRole').click(function(e) {
+                $('#deleteArticle').click(function(e) {
                     e.preventDefault();
                     let id = $(this).data('id');
 
                     if (confirm('Are you sure you want to delete?')) {
                         $.ajax({
-                            url: "{{ route('roles.destroy', ':id') }}".replace(':id', id),
+                            url: "{{ route('articles.destroy', ':id') }}".replace(':id', id),
                             type: "delete",
                             data: {
                                 id: id
@@ -95,12 +90,20 @@
                                 'x-csrf-token': '{{ csrf_token() }}'
                             },
                             success: function(response) {
-                                if (response.status) { 
+                                if (response.status) {
                                     location.reload();
                                 }
                             },
                             error: function(xhr) {
-                                alert('An error occurred: ' + xhr.responseText);
+                                if (xhr.status === 403) {
+                                    // Show a message for no permission
+                                    alert('You do not have permission to delete this article.');
+                                } else if (xhr.status === 404) {
+                                    // Show a message for article not found
+                                    alert('Article not found.');
+                                } else {
+                                    alert('An error occurred: ' + xhr.responseText);
+                                }
                             }
                         });
                     }

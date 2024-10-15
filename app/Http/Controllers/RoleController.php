@@ -9,12 +9,20 @@ use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:view roles', ['only' => ['index']]);
+        $this->middleware('permission:edit roles', ['only' => ['edit']]);
+        $this->middleware('permission:create roles', ['only' => ['create']]);
+        $this->middleware('permission:delete roles', ['only' => ['destroy']]);
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $roles = Role::orderBy('name', 'ASC')->paginate(10);
+        $roles = Role::orderBy('name', 'DESC')->paginate(10);
         return view('roles.index', compact('roles'));
     }
 
@@ -60,24 +68,53 @@ class RoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Role $role)
     {
-        //
+        $hasPermissions = $role->permissions->pluck('name');
+        $permissions = Permission::orderBy('name', 'ASC')->get();
+        return view('roles.edit', compact('hasPermissions', 'role', 'permissions'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Role $role)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|unique:roles,name,'.$role->id.',id',
+        ]);
+
+        if ($validator->passes()) {
+            $role->name = $request->name;
+            $role->save();
+            if (!empty($request->permission)) {
+                $role->syncPermissions($request->permission);
+            }else{
+                $role->syncPermissions([]);
+            }
+            return redirect()->route('roles.index')->with('success', 'Role updated successfully');
+        } else {
+            return redirect()->route('roles.edit', $role)->withInput()->withErrors($validator);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Role $role)
     {
-        //
+        if ($role == null) {
+            session()->flash('success','Role not found!');
+            return response()->json([
+                'status' => false
+            ]);
+        }
+
+        $role->delete();
+
+        session()->flash('success','Role deleted successfully.');
+        return response()->json([
+            'status' => true
+        ]);
     }
 }

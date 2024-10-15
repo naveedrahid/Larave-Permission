@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,4 +35,6 @@ Route::middleware('auth')->group( function()
     Route::delete('/permissions', [PermissionController::class, 'destroy'])->name('permissions.destroy');
 
     Route::resource('roles', RoleController::class);
+    Route::resource('articles', ArticleController::class);
+    Route::resource('users', UserController::class);
 });

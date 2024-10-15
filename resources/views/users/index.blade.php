@@ -6,8 +6,8 @@
             <div class="col-md-12">
                 <div
                     class="pageTitle bg-light shadow-sm py-3 px-3 rounded mb-5 d-flex align-items-center justify-content-between">
-                    <p class="m-0"><strong>{{ __('Roles') }}</strong></p>
-                    <a href="{{ route('roles.create') }}"
+                    <p class="m-0"><strong>{{ __('Users') }}</strong></p>
+                    <a href="{{ route('users.create') }}"
                         class="btn btn-primary bg-dark text-white border-0">{{ __('Create') }}</a>
                 </div>
             </div>
@@ -31,31 +31,27 @@
                                     <thead>
                                         <tr>
                                             <th width="10%">#</th>
-                                            <th width="30%">Name</th>
-                                            <th width="30%">Permissions</th>
-                                            <th width="15%">Created</th>
-                                            <th width="15%">Action</th>
+                                            <th width="15%">Name</th>
+                                            <th width="15%">Email</th>
+                                            <th width="20%">Role</th>
+                                            <th width="20%">Date</th>
+                                            <th width="20%">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($roles as $role)
+                                        @forelse ($users as $user)
                                             <tr>
-                                                <td>{{ $role->id }}</td>
-                                                <td>{{ $role->name }}</td>
-                                                <td class="d-flex flex-wrap">
-                                                    @foreach ($role->permissions as $permission)
-                                                        <p class="rounded py-1 px-2 bg-success text-white mb-1 me-2">
-                                                            {{ ucfirst($permission->name) }}
-                                                        </p>
-                                                    @endforeach
-                                                </td>
-                                                <td>{{ \Carbon\Carbon::parse($role->created_at)->format('d M, Y') }}
-                                                </td>
+                                                <td>{{ $user->id }}</td>
+                                                <td>{{ $user->name }}</td>
+                                                <td>{{ $user->email }}</td>
+                                                <td>{{ $user->roles->pluck('name')->implode(' , ') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($user->created_at)->format('d M, Y') }}
+                                                </td>  
                                                 <td>
                                                     <a href="javascript:void(0);" id="deleteRole"
-                                                        data-id="{{ $role->id }}"
+                                                        data-id="{{ $user->id }}"
                                                         class="btn btn-primary btn-sm bg-danger text-white border-0 me-3">{{ __('Delete') }}</a>
-                                                    <a href="{{ route('roles.edit', $role->id) }}"
+                                                    <a href="{{ route('users.edit', $user->id) }}"
                                                         class="btn btn-primary btn-sm text-white border-0 bg-aqua">{{ __('Edit') }}</a>
                                                 </td>
                                             </tr>
@@ -67,7 +63,7 @@
                                     </tbody>
                                 </table>
                                 <div class="d-flex justify-content-center">
-                                    {{ $roles->links('pagination::bootstrap-4') }}
+                                    {{ $users->links('pagination::bootstrap-4') }}
                                 </div>
                             </div>
                         </div>
@@ -76,7 +72,7 @@
             </div>
         </div>
     @endsection
-    @push('js')
+    {{-- @push('js')
         <script>
             $(function() {
                 $('#deleteRole').click(function(e) {
@@ -85,7 +81,7 @@
 
                     if (confirm('Are you sure you want to delete?')) {
                         $.ajax({
-                            url: "{{ route('roles.destroy', ':id') }}".replace(':id', id),
+                            url: "{{ route('users.destroy', ':id') }}".replace(':id', id),
                             type: "delete",
                             data: {
                                 id: id
@@ -107,4 +103,4 @@
                 });
             });
         </script>
-    @endpush
+    @endpush --}}
