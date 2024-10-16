@@ -77,7 +77,7 @@
 
                     if (confirm('Are you sure you want to delete?')) {
                         $.ajax({
-                            url: "{{ route('permissions.destroy') }}",
+                            url: "{{ route('permissions.destroy', ':id') }}".replace(':id', id),
                             type: "delete",
                             data: {
                                 id: id

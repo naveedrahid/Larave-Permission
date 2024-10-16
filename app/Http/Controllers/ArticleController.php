@@ -8,13 +8,13 @@ use Illuminate\Support\Facades\Validator;
 
 class ArticleController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('permission:view articles', ['only' => ['index']]);
-        $this->middleware('permission:edit articles', ['only' => ['edit']]);
-        $this->middleware('permission:create articles', ['only' => ['create']]);
-        $this->middleware('permission:delete articles', ['only' => ['destroy']]);
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('permission:view articles', ['only' => ['index']]);
+    //     $this->middleware('permission:edit articles', ['only' => ['edit']]);
+    //     $this->middleware('permission:create articles', ['only' => ['create']]);
+    //     $this->middleware('permission:delete articles', ['only' => ['destroy']]);
+    // }
 
     /**
      * Display a listing of the resource.
